@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from utils import *
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import r2_score
 from sklearn.ensemble import RandomForestClassifier
@@ -98,7 +98,11 @@ def main(args):
     #train_pred = model.predict_proba(train_X.loc[:, cols])
 
 
-    #val_pred = model.predict_proba(val_X)
+    val_pred = model.predict_proba(val_X[:, cols])
+
+    # Compute validation scores, accuracy, precision, recall
+    val_sc = model.score(val_X[:, cols], val_y)
+    print("Validation score: {}".format(val_sc))
 
     print(train_X.columns[cols])
 
@@ -114,10 +118,9 @@ def main(args):
 
     print(feat_imp.importances_mean, feat_imp.importances_std)
 
-    scores = cross_val_score(model, train_X.loc[:, cols], train_y,
-    cv=5)
+    scores = cross_validate(model, train_X.loc[:, cols], train_y, cv=5, scoring=['accuracy', 'precision', 'recall', 'roc_auc'])
 
-    sc_frame = pd.DataFrame(data={"scores" : scores})
+    sc_frame = pd.DataFrame(scores)
 
     sc_frame.to_csv(args.out_dir + "/cv_scores_{}.tsv".format(modeltype),
     sep='\t', index=False)
