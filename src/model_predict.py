@@ -87,7 +87,7 @@ def main(args):
      "coverage", "num_skip", "name",  "chr", "start", "end", "label"])
 
     train_cols = train_X.columns[cols]
-    print(f"Using for training and fitting {" ".join(train_cols)}")
+    print("Using for training and fitting {}".format(' '.join(train_cols)))
 
     print(train_X.loc[:, cols])
 

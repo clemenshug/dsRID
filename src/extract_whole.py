@@ -52,7 +52,7 @@ def main(args):
     chrs = args.chr
     # chrs = ["chrX", "chrY"]
     # chrs.extend(["chr" + str(i) for i in range(1, 23)])
-    print(f"Using chromosomes {" ".join(chrs)}")
+    print("Using chromosomes {}".format(' '.join(chrs)))
     sample_num = 1000000
     chr_max = {}
     for chr in chrs:
