@@ -36,16 +36,23 @@ def main(args):
         default=6
     )
 
+    argp.add_argument(
+        "-c", "--chr",
+        help = "chromosomes to be analyzed",
+        nargs='*',
+        type=str
+    )
+
     args = argp.parse_args(args)
 
     mapq_thr = 20
     #chr = args.chr
     window = 2500
     slide = 1250
-    #chrs = args.chr
-    chrs = ["chrX", "chrY"]
-    chrs.extend(["chr" + str(i) for i in range(1, 23)])
-    print(chrs)
+    chrs = args.chr
+    # chrs = ["chrX", "chrY"]
+    # chrs.extend(["chr" + str(i) for i in range(1, 23)])
+    print(f"Using chromosomes {" ".join(chrs)}")
     sample_num = 1000000
     chr_max = {}
     for chr in chrs:
@@ -72,7 +79,7 @@ def main(args):
         start = 0
         end = start + window
         name = chr + ":" + str(start) + "-" + str(end)
-        
+
         while(end < 2.5e8):
             if end < chr_max[chr]:
                 end = chr_max[chr]
@@ -80,10 +87,10 @@ def main(args):
                 name = chr + ":" + str(start) + "-" + str(end)
                 continue
             #print(chr, start, end)
-            
+
             coverage = sam.count(chr, start, end)
             read_list = list()
-            
+
             if  coverage < args.read_threshold:
                 start = start + slide
                 end = start + window
