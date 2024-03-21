@@ -86,6 +86,8 @@ def main(args):
     cols = ~train_X.columns.isin(["mean_start", "mean_end",
      "coverage", "num_skip", "name",  "chr", "start", "end", "label"])
 
+    train_cols = train_X.columns[cols]
+
     print(train_X.loc[:, cols])
 
     model = model.fit(train_X.loc[:, cols], train_y)
@@ -131,20 +133,8 @@ def main(args):
 
     pred_frame = pred_frame.fillna(0)
 
-    pred_frame.columns = map(str.lower, pred_frame.columns)
-
-    #print(pred_frame.columns.startswith("bp"))
-
-    cols = pred_frame.columns.isin(['std_start', 'std_end', 'len_skip', 'skip_ratio', 'group_num',
-       'group_std', 'gc_skip', 'bp_start_ct', 'bp_end_ac', 'bp_start_tc',
-       'bp_start_at', 'bp_end_ag', 'bp_end_tt', 'bp_start_gg', 'bp_start_aa',
-       'bp_start_tt', 'bp_start_ac', 'bp_start_ag', 'bp_end_tg', 'bp_end_gc',
-       'bp_end_aa', 'bp_end_gg', 'bp_start_cc', 'bp_start_ca', 'bp_start_gt',
-       'bp_end_gt', 'bp_end_tc', 'bp_end_cc', 'bp_end_cg', 'bp_end_ct',
-       'bp_start_gc', 'bp_start_cg', 'bp_end_at', 'bp_end_ta', 'bp_start_tg',
-       'bp_start_ga', 'bp_start_ta', 'bp_end_ca', 'bp_end_ga'])
-
-    whole_pred = model.predict_proba(pred_frame.loc[:, cols])
+    # Make sure the columns are in the same order as the training data
+    whole_pred = model.predict_proba(pred_frame.loc[:, train_cols])
 
     pred_frame['pred_0'] = whole_pred[:, 0]
 
