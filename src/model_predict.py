@@ -52,7 +52,7 @@ def main(args):
 
     model_dic = {
       "logireg" : LogisticRegression(random_state=0),
-      "randomf" : RandomForestClassifier(random_state=0, bootstrap=True, 
+      "randomf" : RandomForestClassifier(random_state=0, bootstrap=True,
     criterion="gini", max_features=0.2, min_samples_leaf=4,
     min_samples_split=2, n_estimators=100),
       "svm" : LinearSVC(random_state=0, max_iter=2000)
@@ -60,7 +60,7 @@ def main(args):
 
     model = model_dic[modeltype]
 
-    all_frame = pd.read_csv(args.input_file, 
+    all_frame = pd.read_csv(args.input_file,
       sep='\t')
 
     all_frame = all_frame.fillna(0)
@@ -126,7 +126,7 @@ def main(args):
     train_X['pred_0'] = train_pred[:, 0]
 
     train_X['pred_1'] = train_pred[:, 1]
-    
+
     pred_frame = pd.read_csv(args.pred_file, sep='\t')
 
     pred_frame = pred_frame.fillna(0)
@@ -150,7 +150,7 @@ def main(args):
 
     pred_frame['pred_1'] = whole_pred[:, 1]
 
-    pred_frame.to_csv(args.out_dir + "dsRID_whole.tsv", sep='\t', index=False)
+    pred_frame.to_csv(args.out_dir + "dsRID_pred_{}.tsv".format(modeltype), sep='\t', index=False)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
