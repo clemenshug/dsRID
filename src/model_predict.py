@@ -87,6 +87,7 @@ def main(args):
      "coverage", "num_skip", "name",  "chr", "start", "end", "label"])
 
     train_cols = train_X.columns[cols]
+    print(f"Using for training and fitting {" ".join(train_cols)}")
 
     print(train_X.loc[:, cols])
 
@@ -140,7 +141,7 @@ def main(args):
 
     pred_frame['pred_1'] = whole_pred[:, 1]
 
-    pred_frame.to_csv(args.out_dir + "dsRID_pred_{}.tsv".format(modeltype), sep='\t', index=False)
+    pred_frame.to_csv(args.out_dir + "/dsRID_prediction_{}.tsv".format(modeltype), sep='\t', index=False)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
