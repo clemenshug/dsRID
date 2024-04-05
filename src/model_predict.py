@@ -1,16 +1,13 @@
 import sys
-sys.path.insert(1, '/u/home/r/ryo10244/Xiao_lab/dsRNA_pred/script/utils')
 
-import re
-import pysam
 import argparse as ap
 import pandas as pd
 import numpy as np
 from utils import *
+import sklearn.metrics as metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, cross_validate
 from sklearn.inspection import permutation_importance
-from sklearn.metrics import r2_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
 
@@ -98,11 +95,16 @@ def main(args):
     #train_pred = model.predict_proba(train_X.loc[:, cols])
 
 
-    val_pred = model.predict_proba(val_X[:, cols])
-
-    # Compute validation scores, accuracy, precision, recall
-    val_sc = model.score(val_X[:, cols], val_y)
-    print("Validation score: {}".format(val_sc))
+    val_pred = model.predict_proba(val_X.loc[:, cols])
+    # Compute validation accuracy, precision, recall
+    val_pred_labels = np.argmax(val_pred, axis=1)
+    val_scores = {
+        "accuracy" : metrics.accuracy_score(val_y, val_pred_labels),
+        "precision" : metrics.precision_score(val_y, val_pred_labels),
+        "recall" : metrics.recall_score(val_y, val_pred_labels),
+        "roc_auc" : metrics.roc_auc_score(val_y, val_pred_labels)
+    }
+    pd.DataFrame(val_scores, index=[0]).to_csv(args.out_dir + "/val_scores_{}.tsv".format(modeltype), sep='\t', index=False)
 
     print(train_X.columns[cols])
 
@@ -113,8 +115,7 @@ def main(args):
 
     print(feat_imp_df)
 
-    feat_imp_df.to_csv(args.out_dir + "/feat_importance_{}.tsv".format(modeltype),
-    sep='\t', index=False)
+    feat_imp_df.to_csv(args.out_dir + "/feat_importance_{}.tsv".format(modeltype), sep='\t', index=False)
 
     print(feat_imp.importances_mean, feat_imp.importances_std)
 
